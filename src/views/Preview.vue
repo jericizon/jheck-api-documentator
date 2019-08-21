@@ -37,12 +37,13 @@
 
   			      <br>
       			  <h3 class="title is-5">Endpoint</h3>
-      			  <br>
-      			  <div class="notification is-primary">
+      			  <div class="notification" :class="'method-' + request.details.method.toLowerCase()">
       			    <span class="tag is-light">{{ request.details.method }}</span> - {{ request.details.endpoint }}
       			  </div>
 
       			  <template v-if="request.request_headers.length">
+      			  	
+      			  	<br>
       			  	<h3 class="title is-5">Headers</h3>
       			  	<div class="table-container">
                   <table class="table is-bordered is-striped is-hoverable is-fullwidth">
@@ -68,6 +69,8 @@
       			  </template>
 
       			  <template v-if="request.parameters.length">
+      			  	
+      			  	<br>
 	  				  	<h3 class="title is-5">Parameters</h3>
 	  				  	<div class="table-container">
 	  	            <table class="table is-bordered is-striped is-hoverable is-fullwidth">
@@ -218,5 +221,30 @@
 				color: #fff;
 			}
 		}
+	}
+
+	.notification{
+		&.method-get{
+	    background-color: #00d1b2;
+	    color: #fff;
+		}
+
+		&.method-post{
+			background-color: #ffdd57;
+			color: rgba(0,0,0,.7);
+		}
+		&.method-put{
+			background-color: #23d160;
+	    color: #fff;
+		}
+		&.method-patch{
+			background-color: #209cee;
+			color: #fff;
+		}
+		&.method-delete{
+			background-color: #ff3860;
+			color: #fff;
+		}
+		&.method-option{}
 	}
 </style>
