@@ -31,7 +31,7 @@
 		
 			<br>
   		<h4 class="title is-4">Experiencing errors?</h4>
-  		<p>Try to your browser in incognito mode or clear your browser cookies, as this app uses cookie to save the data. If error still happen you can issue a ticket <a href="https://github.com/jheck102209/jheck-api-document-generator/issues/new" target="_blank">here</a>.</p>
+  		<p>Try to your browser in incognito mode or clear your browser cookies, as this app uses cookie to save the data. If error still happen you can issue a ticket <a href="https://github.com/jheckizon/jheck-api-documentator/issues/new" target="_blank">here</a>.</p>
 
   	</div>
   </div>

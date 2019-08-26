@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/jheck-api-document-generator/'
+  publicPath: '/jheck-api-documentator/'
 }

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <a class="github-ribbon" target="_blank" href="https://github.com/jheck102209/jheck-api-document-generator"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+    <a class="github-ribbon" target="_blank" href="https://github.com/jheckizon/jheck-api-documentator"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" alt="Fork me on GitHub" data-recalc-dims="1"></a>
 
     <div id="main-nav">
       <div class="container is-fluid">
@@ -9,7 +9,7 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/app">App</router-link></li>
           <li><router-link to="/preview">Online Previewer</router-link></li>
-          <li><a href="https://github.com/jheck102209/jheck-api-document-generator/issues/new" target="_blank">Found a bug?</a></li>
+          <li><a href="https://github.com/jheckizon/jheck-api-documentator/issues/new" target="_blank">Found a bug?</a></li>
         </ul>
       </div>
     </div>
