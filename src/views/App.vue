@@ -80,7 +80,6 @@
                 <h3 class="subtitle">Headers</h3>
 
                 <div class="form-input">
-
                   <div class="table-container" v-if="request_headers.length">
                     <table class="table is-bordered is-striped is-hoverable is-fullwidth">
                       <thead>
@@ -125,74 +124,97 @@
                 <div class="form-input">
                   <div class="table-container" v-if="parameters.length">
 
-                    <table v-for="(parameter, index) in parameters" class="table is-bordered is-striped is-hoverable is-fullwidth">
-                      <tbody>
-                        <tr>
-                          <td>Type</td>
-                          <td>
-                            <div class="select parameters-type">
-                              <select
-                                v-model="parameters[index].type"
-                              >
-                                <option v-for="(type, index) in form_options.parameter.type">
-                                  {{type}}
-                                </option>
-                              </select>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Name</td>
-                          <td>
-                            <input 
-                              class="input"
-                              type="text"
-                              placeholder="Input field" 
-                              v-model="parameters[index].name"
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Values <small>(Optional)</small></td>
-                          <td>
-                            <input 
-                              class="input"
-                              type="text"
-                              placeholder="Enter available values in parameter" 
-                              v-model="parameters[index].values"
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Default value <small>(Optional)</small></td>
-                          <td>
-                            <input 
-                              class="input"
-                              type="text"
-                              placeholder="Enter default value if this field is empty" 
-                              v-model="parameters[index].default_value"
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Description <small>(Optional)</small></td>
-                          <td>
-                            <input 
-                              class="input"
-                              type="text"
-                              placeholder="Description" 
-                              v-model="parameters[index].description"
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="2">
-                            <button class="button is-danger btn-delete" @click="removeParameter(index)"><i class="mdi mdi-delete"></i> Delete</button>        
-                          </td>
-                        </tr>
-                
-                      </tbody>
-                    </table>
+                    <div v-for="(parameter, index) in parameters" >
+                      <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+                        <tbody>
+                          <template v-if="parameter.isMinimized === false">
+                            <tr>
+                              <td>Type</td>
+                              <td>
+                                <div class="select parameters-type">
+                                  <select
+                                    v-model="parameters[index].type"
+                                  >
+                                    <option v-for="(type, index) in form_options.parameter.type">
+                                      {{type}}
+                                    </option>
+                                  </select>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Name</td>
+                              <td>
+                                <input 
+                                  class="input"
+                                  type="text"
+                                  placeholder="Input field" 
+                                  v-model="parameters[index].name"
+                                >
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Values <small>(Optional)</small></td>
+                              <td>
+                                <input 
+                                  class="input"
+                                  type="text"
+                                  placeholder="Enter available values in parameter" 
+                                  v-model="parameters[index].values"
+                                >
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Default value <small>(Optional)</small></td>
+                              <td>
+                                <input 
+                                  class="input"
+                                  type="text"
+                                  placeholder="Enter default value if this field is empty" 
+                                  v-model="parameters[index].default_value"
+                                >
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Description <small>(Optional)</small></td>
+                              <td>
+                                <input 
+                                  class="input"
+                                  type="text"
+                                  placeholder="Description" 
+                                  v-model="parameters[index].description"
+                                >
+                              </td>
+                            </tr>
+                          </template>
+                          <tr>
+                            <td colspan="2">
+                              <div class="columns">
+                                <div class="column is-two-thirds" v-if="parameter.isMinimized !== false">
+                                  <p class="minimized-name">{{ parameter.name }}</p>
+                                </div>
+                                <div class="column">
+                                  <div class="buttons float-right">
+                                    <button class="button is-danger btn-delete" @click="removeParameter(index)">
+                                      <span class="icon is-small">
+                                        <i class="mdi mdi-delete"></i>
+                                      </span>
+                                      <span>Delete</span>
+                                    </button>
+                                    <button class="button is-link" @click="minimizeParameter(index)">
+                                      <span class="icon is-small">
+                                        <i class="mdi " :class="{'mdi-chevron-up' : !parameter.isMinimized, 'mdi-chevron-down': parameter.isMinimized }"></i>
+                                      </span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                  
+                        </tbody>
+                      </table>
+                    </div>
 
                   </div>
                   <button class="button is-small" @click="addParameter()">Add parameter</button>
@@ -386,7 +408,7 @@ export default {
       }
     },
     addParameter(){
-      this.parameters.push({name: '', type: 'MIXED', description: ''})
+      this.parameters.push({name: '', type: 'MIXED', description: '', isMinimized: false})
     },
     removeHeader(index){
       this.request_headers.splice(index, 1);
@@ -394,6 +416,10 @@ export default {
     removeParameter(index){
       this.parameters.splice(index, 1);
     },
+    minimizeParameter(index){
+      let parameter = this.parameters[index];
+      this.parameters[index].isMinimized = parameter.isMinimized != true ? true : false;
+    }
   },
   watch:{
     $route (to, from){
@@ -438,7 +464,15 @@ export default {
       width: 100%;
     }
   }
-  .btn-delete{
-    margin-top: 10px;
+  .table-container{
+    .table{
+      margin-bottom: 30px;
+    }
+  }
+  .minimized-name{
+    word-break: break-word;
+  }
+  .float-right{
+    float: right;
   }
 </style>

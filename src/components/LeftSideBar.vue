@@ -18,7 +18,13 @@
           </span>
           <span>Export</span>
         </button>
-        <a id="export-json" download="jheck-api-export.json" style="display:none">Export</a>
+        <a id="export-json" download="jheck-api-export.json" style="display:none">Preview</a>
+        <button class="button is-link is-fullwidth" @click="showPreview()">
+          <span class="icon is-small">
+            <i class="mdi mdi-leaf"></i>
+          </span>
+          <span>Preview</span>
+        </button>
       </template>
     </div>
 
@@ -104,7 +110,10 @@ export default {
         title: 'Success',
         message: 'JSON exported',
       })
-
+    },
+    showPreview(){
+      window.setCookie('preview_data', JSON.stringify(this.$store.state.data));
+      this.$router.push( { name: 'preview' });
     }
   },
   mounted() {

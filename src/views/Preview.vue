@@ -17,7 +17,7 @@
 	  		  <p class="menu-label">Requests</p>
 	  		  <ul class="menu-list" v-scroll-spy-active v-scroll-spy-link>
 	          <li v-for="(request, index) in requests">
-	          	<a :href="'#' + request.id">{{request.information.name }}</a>
+	          	<a>{{request.information.name }}</a>
 	          </li>
 	        </ul>
 	  		</aside>
