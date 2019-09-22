@@ -19,6 +19,6 @@ Try to open your browser in incognito mode or clear your browser cookies, as thi
 
 https://www.producthunt.com/posts/jheck-api-documentator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-jheck-api-documentator
 
-![Screenshot](screenshot-1.png)
+![Screenshot](screenshot-1.jpg)
 
-![Screenshot](screenshot-1.png)
+![Screenshot](screenshot-2.jpg)
