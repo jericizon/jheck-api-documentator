@@ -36,17 +36,16 @@
                 <br>
                 <h4 class="title is-4">Experiencing errors?</h4>
                 <p>Try to open your browser in incognito mode or clear your browser cookies, as this app uses cookie to save the data. If error still happen you can issue a ticket <a href="https://github.com/jheckizon/jheck-api-documentator/issues/new" target="_blank">here</a>.</p>
-                </div>
-            </div>
 
-            <footer class="footer">
-              <div class="content has-text-centered">
-                <p>
-                  Copyright © 2019 <strong>Jheck Api Documentator</strong> by <a href="https://github.com/jheckizon" target="_blank">Jeric</a>. All rights reserved.
-                </p>
-              </div>
-            </footer>
+            </div>
         </div>
+        <footer class="footer">
+          <div class="content has-text-centered">
+            <p>
+              Copyright © 2019 <strong>Jheck Api Documentator</strong> by <a href="https://github.com/jheckizon" target="_blank">Jeric</a>. All rights reserved.
+            </p>
+          </div>
+        </footer>
     </div>
 
 </template>

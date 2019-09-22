@@ -45,6 +45,7 @@
                                 <a class="button is-danger tooltip is-tooltip-bottom" data-tooltip="Clear your cookies" @click="clearWorkspace()" v-if="showClearAllRecords">
                                     <span class="icon"><i class="mdi mdi-delete-alert"></i></span> <span>Clear all workspace</span>
                                 </a>
+                                <a href="https://www.producthunt.com/posts/jheck-api-documentator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-jheck-api-documentator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=168639&theme=light" alt="Jheck Api Documentator - Simplify creating of api documentation online | Product Hunt Embed" style="width: 130px; height: 54px; transform: scale(1.3); transform-origin: left center;" target="_blank"/></a>
                                 <a id="export-json" download="jheck-api-export.json" style="display:none">Preview</a>
                                 <input type="file" id="import-json" accept=".json,application/json" style="display: none;">
                             </div>
@@ -72,6 +73,7 @@
             position: fixed;
             top: 0;
             right: 0;
+            display: none;
         }
 
         + div{
