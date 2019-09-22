@@ -5,14 +5,14 @@
             <div class="container">
                 <div class="navbar-brand">
                     <router-link to="/" class="navbar-item"><img src="./assets/logo.png" alt="Jheck Api Documentator Logo"></router-link>
-                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="subMenuToggle" @click="isOpen = !isOpen" v-bind:class="{'is-active': isOpen}">
+                    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="subMenuToggle" @click="isOpen = !isOpen" :class="{'is-active': isOpen}">
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                     </a>
                 </div>
 
-                <div id="subMenuToggle" class="navbar-menu">
+                <div id="subMenuToggle" class="navbar-menu" :class="{'is-active': isOpen}">
                     <div class="navbar-start">
                         <router-link to="/" class="navbar-item">Home</router-link>
                         <router-link to="/app" class="navbar-item">App</router-link>
