@@ -15,6 +15,10 @@ Just navigate to Online Previewer to view your created document, or you can also
 ## Experiencing errors?
 Try to open your browser in incognito mode or clear your browser cookies, as this app uses cookie to save the data. If error still happen you can issue a ticket
 
+## Support us on product hunt
+
+https://www.producthunt.com/posts/jheck-api-documentator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-jheck-api-documentator
+
 ![Screenshot](screenshot-1.png)
 
 ![Screenshot](screenshot-1.png)
