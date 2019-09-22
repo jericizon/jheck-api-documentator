@@ -4,7 +4,7 @@
             <a class="github-ribbon" href="https://github.com/jheckizon/jheck-api-documentator"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
             <div class="container">
                 <div class="navbar-brand">
-                    <router-link to="/" class="navbar-item">Jheck Api Documentator</router-link>
+                    <router-link to="/" class="navbar-item"><img src="./assets/logo.png" alt="Jheck Api Documentator Logo"></router-link>
                     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="subMenuToggle" @click="isOpen = !isOpen" v-bind:class="{'is-active': isOpen}">
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
@@ -14,6 +14,7 @@
 
                 <div id="subMenuToggle" class="navbar-menu">
                     <div class="navbar-start">
+                        <router-link to="/" class="navbar-item">Home</router-link>
                         <router-link to="/app" class="navbar-item">App</router-link>
                         <router-link to="/preview" class="navbar-item">Online Previewer</router-link>
 
