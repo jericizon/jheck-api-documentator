@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Cookies from "js-cookie";
 
 Vue.use(Vuex)
 
@@ -16,47 +17,37 @@ Vue.use(Vuex)
 // })
 
 export default function (/* { ssrContext } */) {
-  const store = new Vuex.Store({
-    state: {
-      data: [],
-    },
-    getters: {
-      data: state => {
-        return state.data = window.getCookie('data') != '' ? JSON.parse( window.getCookie('data') ) : [];
-      }
-    },
-    mutations: {
-      createRequest( state, _data ){
-        _data.id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        state.data.push(_data);
-        this.commit("saveCookie");
-      },
-      deleteRequest( state, idx ){
-        if ( typeof state.data[idx] != 'undefined' ) {
-          state.data.splice(idx, 1);
-          this.commit("saveCookie");
-        }
-      },
-      updateData( state, _data ){
-
-        let idx = _data.idx;
-        if ( typeof state.data != 'undefined' && typeof _data != 'undefined' ) {
-          state.data[idx] = _data;
-          this.commit("saveCookie");
-        }
-      },
-      saveCookie( state ){
-        window.setCookie('data', JSON.stringify( state.data ), 1 );
-      },
-      importCookie( state, data ){
-        state.data = data;
-        this.commit('saveCookie');
-      }
-    },
-    actions: {
-      
-    }
-  })
+    const store = new Vuex.Store({
+        state: {
+            requests: [],
+        },
+        getters: {
+            requests: state => {
+                return state.requests;
+            }
+        },
+        mutations: {
+            refreshCookie(state){
+                let jheckApiGeneratorData = Cookies.get('jheckApiGeneratorData');
+                    return state.requests = typeof jheckApiGeneratorData != 'undefined' && jheckApiGeneratorData != '' ? JSON.parse(jheckApiGeneratorData) : [];
+            },
+            saveRequest( state, _data ){
+                state.requests = _data;
+                this.commit('saveCookie');
+            },
+            importJson( state, _data ){
+                this.commit('saveRequest', _data);
+                this.commit('refreshCookie');
+            },
+            saveCookie(state){
+                Cookies.set('jheckApiGeneratorData', JSON.stringify(state.requests), { expires: 1 });
+            },
+            clearWorkspace(state){
+                this.commit('saveRequest', []);
+                this.commit('refreshCookie');
+            }
+        },
+    })
 
   window.store = store
   return store

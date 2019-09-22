@@ -1,478 +1,815 @@
 <template>
-  <div>
-  	<div id="create-page">
-	  	<aside id="left-sidebar">
-	  		<LeftSideBar />
-	  	</aside>
-	  	<main id="main-content">
-        <div class="container">
-          <div id="form-wrapper">
-            <div class="columns">
-              <div class="column">
-                <h3 class="subtitle">Request information</h3>
-                <div class="form-input">
-                  <label class="label" for="request_name">Request Name</label>
-                  <input 
-                    id="request_name" 
-                    class="input"
-                    type="text"
-                    v-model="information.name"
-                  >
-                  <span class="helper-text">Label your request action</span>
-                </div>
 
-                <div class="form-input">
-                  <label class="label" for="request_description">Description</label>
-                  <textarea
-                    id="request_description" 
-                    class="input"
-                    v-model="information.description"
-                    ></textarea>
-                </div>
-                
-                <hr>
-                <h3 class="subtitle">Request details</h3>
+    <div class="app-page">
+        <div class="left-col">
+            <aside class="menu">
+                <ul class="menu-list">
+                    <li>
+                        <a @click="createNewRequest()">
+                            <span class="icon"><i class="mdi mdi-plus"></i></span>
+                            <span>Create new request</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a @click="createNewFolder()">
+                            <span class="icon"><i class="mdi mdi-folder-plus"></i></span>
+                            <span>Create new folder</span>
+                        </a>
+                    </li>
 
-                <div class="form-input">
-                  <label class="label" for="request_endpoint">Endpoint</label>
-                  <div class="columns">
-                    <div class="column is-one-quarter">
-                      <div class="select parameters-type">
-                        <select
-                          v-model="details.method"
-                        >
-                          <option v-for="(method, index) in form_options.methods">
-                            {{method}}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <input 
-                        id="request_endpoint" 
-                        class="input"
-                        type="text"
-                        v-model="details.endpoint"
-                      >
-                      <span class="helper-text">Sample: /user/create</span>
-                    </div>
-                  </div>
-                </div>
+                    <p class="menu-label">Requests</p>
 
-                <hr>
-                <div class="buttons">
-                  <button class="button is-primary is-medium" @click="saveRequest()">
-                    <span class="icon">
-                      <i class="mdi mdi-content-save"></i>
-                    </span>
-                    <span>Save</span>
-                  </button>
+                    <template v-for="(folder,folderIndex) in requests">
+                        <li v-if="folder.isFolder">
+                            <div class="request-folder" :class="{'folder-is-open': folder.isFolderOpen}">
+                                <span class="icon tooltip is-tooltip-right is-tooltip-success" data-tooltip="Toggle folder" @click="toggleFolder(folderIndex)">
+                                    <i class="mdi" :class="{'mdi-folder-open': folder.isFolderOpen, 'mdi-folder': ! folder.isFolderOpen}"></i></span>
+                                    <span>
+                                        <input
+                                            type="text"
+                                            v-model="requests[folderIndex].contents.details.name"
+                                            @change="checkFolderName(folderIndex)"
+                                        >
+                                    </span>
+                                <button class="button button-remove tooltip is-tooltip-left is-tooltip-danger" data-tooltip="Remove folder" @click="removeFolder(folderIndex)">
+                                  <span class="icon">
+                                    <i class="mdi mdi-delete" aria-hidden="true"></i>
+                                  </span>
+                                </button>
+                            </div>
+                            <ul v-if="folder.isFolderOpen">
+                                <template v-for="(request,index) in requests">
+                                    <li class="request-item" v-if="! request.isFolder && request.parentId == folder.id">
+                                        <router-link active-class="is-active" class="request-button" :to="{ name: 'app', params: { id: request.id }}">
+                                            <span class="tag method" :data-method="request.contents.method.toLowerCase()">{{request.contents.method}}</span>
+                                            <span class="request-name">{{request.contents.details.name}}</span>
+                                        </router-link>
+                                        <button class="button button-remove tooltip is-tooltip-right is-tooltip-danger" data-tooltip="Delete request" @click="deleteRequest(index)">
+                                          <span class="icon">
+                                            <i class="mdi mdi-delete" aria-hidden="true"></i>
+                                          </span>
+                                        </button>
+                                    </li>
+                                </template>
 
-                  <button class="button is-danger is-medium" @click="deleteRequest()" v-if="showDelete">
-                    <span class="icon">
-                      <i class="mdi mdi-delete"></i>
-                    </span>
-                    <span>Delete</span>
-                  </button>
-                </div>
-              </div>
-              <div class="column">
-                <h3 class="subtitle">Headers</h3>
+                                <li>
+                                    <a @click="createNewRequest( folder.id )">
+                                        <span class="icon"><i class="mdi mdi-plus"></i></span>
+                                        <span>Create new request</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </template>
 
-                <div class="form-input">
-                  <div class="table-container" v-if="request_headers.length">
-                    <table class="table is-bordered is-striped is-hoverable is-fullwidth">
-                      <thead>
-                        <tr>
-                          <th style="width: 50px"></th>
-                          <th>Header name</th>
-                          <th>Value</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <tr v-for="(header, index) in request_headers">
-                          <td>
-                            <button class="button is-small is-danger btn-delete" @click="removeHeader(index)"><span class="icon"><i class="mdi mdi-delete"></i></span></button>
-                          </td>
-                          <td>
-                            <input 
-                              class="input"
-                              type="text"
-                              placeholder="New header" 
-                              v-model="request_headers[index].name"
-                            >
-                          </td>
-                          <td>
-                            <input 
-                              class="input"
-                              type="text"
-                              placeholder="Value" 
-                              v-model="request_headers[index].value"
-                            >
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <button class="button is-small" @click="addHeader()">Add header</button>
-                </div>
-
-                <hr>
-                <h3 class="subtitle">Parameters</h3>
-
-                <div class="form-input">
-                  <div class="table-container" v-if="parameters.length">
-
-                    <div v-for="(parameter, index) in parameters" >
-                      <table class="table is-bordered is-striped is-hoverable is-fullwidth">
-                        <tbody>
-                          <template v-if="parameter.isMinimized === false">
-                            <tr>
-                              <td>Type</td>
-                              <td>
-                                <div class="select parameters-type">
-                                  <select
-                                    v-model="parameters[index].type"
-                                  >
-                                    <option v-for="(type, index) in form_options.parameter.type">
-                                      {{type}}
-                                    </option>
-                                  </select>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Name</td>
-                              <td>
-                                <input 
-                                  class="input"
-                                  type="text"
-                                  placeholder="Input field" 
-                                  v-model="parameters[index].name"
-                                >
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Values <small>(Optional)</small></td>
-                              <td>
-                                <input 
-                                  class="input"
-                                  type="text"
-                                  placeholder="Enter available values in parameter" 
-                                  v-model="parameters[index].values"
-                                >
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Default value <small>(Optional)</small></td>
-                              <td>
-                                <input 
-                                  class="input"
-                                  type="text"
-                                  placeholder="Enter default value if this field is empty" 
-                                  v-model="parameters[index].default_value"
-                                >
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Description <small>(Optional)</small></td>
-                              <td>
-                                <input 
-                                  class="input"
-                                  type="text"
-                                  placeholder="Description" 
-                                  v-model="parameters[index].description"
-                                >
-                              </td>
-                            </tr>
-                          </template>
-                          <tr>
-                            <td colspan="2">
-                              <div class="columns">
-                                <div class="column is-two-thirds" v-if="parameter.isMinimized !== false">
-                                  <p class="minimized-name">{{ parameter.name }}</p>
-                                </div>
-                                <div class="column">
-                                  <div class="buttons float-right">
-                                    <button class="button is-danger btn-delete" @click="removeParameter(index)">
-                                      <span class="icon is-small">
-                                        <i class="mdi mdi-delete"></i>
-                                      </span>
-                                      <span>Delete</span>
-                                    </button>
-                                    <button class="button is-link" @click="minimizeParameter(index)">
-                                      <span class="icon is-small">
-                                        <i class="mdi " :class="{'mdi-chevron-up' : !parameter.isMinimized, 'mdi-chevron-down': parameter.isMinimized }"></i>
-                                      </span>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                  
-                        </tbody>
-                      </table>
-                    </div>
-
-                  </div>
-                  <button class="button is-small" @click="addParameter()">Add parameter</button>
-                </div>
-              </div>
-            </div>
-          </div>
+                    <template v-for="(request,index) in requests">
+                        <li class="request-item" v-if="! request.isFolder && request.parentId == ''">
+                            <router-link active-class="is-active" class="request-button" :to="{ name: 'app', params: { id: request.id }}">
+                                <span class="tag method" :data-method="request.contents.method.toLowerCase()">{{request.contents.method}}</span>
+                                <span class="request-name">{{request.contents.details.name}}</span>
+                            </router-link>
+                            <button class="button button-remove tooltip is-tooltip-left is-tooltip-danger" data-tooltip="Delete request" @click="deleteRequest(index)">
+                              <span class="icon">
+                                <i class="mdi mdi-delete" aria-hidden="true"></i>
+                              </span>
+                            </button>
+                        </li>
+                    </template>
+                </ul>
+            </aside>
         </div>
-	  	</main>
-  	</div>
-  </div>
+        <div class="right-col">
+
+            <div id="api-request-details">
+
+                <template v-if="! showRequestContent">
+                    <section class="hero is-medium welcome-message">
+                      <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                Welcome to jheck api documentator!
+                            </h1>
+                            <h2 class="subtitle" v-if="requests.length == 0">
+                                Create your very first api request <a @click="createNewRequest()">here</a> or you can use our <a>import</a> to continue your work.
+                            </h2>
+                            <h2 class="subtitle" v-else>
+                                Update your api requests by selecting it on the left side menu
+                            </h2>
+                        </div>
+                      </div>
+                    </section>
+                </template>
+
+                <template v-else>
+                    <div class="request-content">
+                        <div class="endpoint-field field has-addons">
+                            <p class="control">
+                                <span class="select select-endpoint">
+                                    <select
+                                      v-model="contents.method"
+                                      @change="saveData()"
+                                    >
+                                        <option v-for="(type, index) in formOptions.methods">
+                                            {{type}}
+                                        </option>
+                                    </select>
+                                </span>
+                            </p>
+                            <p class="control is-expanded">
+                                <input
+                                    class="input input-endpoint"
+                                    type="text"
+                                    placeholder="/users/create"
+                                    v-model="contents.endpoint"
+                                    @change="saveData()"
+                                >
+                            </p>
+                        </div>
+
+                        <div class="container">
+
+                            <div class="tabs">
+                                <ul>
+                                    <template v-for="(tab, index) in tabList">
+                                        <li @click="tabsToggle(tab)" v-bind:class="{'is-active': tabs[tab]}"><a>{{ capitalizeFirstLetter(tab) }}</a></li>
+                                    </template>
+                                </ul>
+                            </div>
+
+                            <div class="tabs-content">
+                                <div id="tab-details" v-if="tabs.details">
+                                    <div class="control">
+                                        <label>Request Name</label>
+                                        <input
+                                            class="input"
+                                            type="text"
+                                            placeholder="Request name"
+                                            v-model="contents.details.name"
+                                            @change="saveData()"
+                                        >
+                                    </div>
+                                    <div class="control">
+                                        <label>Description</label>
+                                        <textarea
+                                            class="textarea"
+                                            placeholder="Description"
+                                            v-model="contents.details.description"
+                                            @change="saveData()"
+                                        ></textarea>
+                                    </div>
+                                </div>
+
+                                <div id="tab-body" v-if="tabs.body">
+                                    <template v-for="(body, index) in contents.body">
+                                        <div class="control">
+                                            <div class="columns">
+                                                <div class="column body-type-select-form">
+                                                    <button class="button is-danger button-remove tooltip" data-tooltip="Remove this parameter" @click="removeField('body', index )"><span class="icon"><i class="mdi mdi-delete"></i></span></button>
+                                                    <div class="select">
+                                                        <select
+                                                          v-model="body.type"
+                                                          @change="saveData()"
+                                                        >
+                                                            <option v-for="(type, index) in formOptions.parameterType">
+                                                                {{type}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="column">
+                                                    <input
+                                                        class="input"
+                                                        type="text"
+                                                        placeholder="Name"
+                                                        v-model="body.name"
+                                                        @change="saveData()"
+                                                    >
+                                                </div>
+                                                <div class="column">
+                                                    <input
+                                                        class="input"
+                                                        placeholder="Description"
+                                                        v-model="body.description"
+                                                        @change="saveData()"
+                                                    ></input>
+                                                </div>
+                                                <div class="column">
+                                                    <input
+                                                        class="input"
+                                                        placeholder="Enter sample values separated by semicolon"
+                                                        v-model="body.sampleValues"
+                                                        @change="saveData()"
+                                                        ></input>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <button class="button-add-new-field button is-white" @click="addNewField('body')"><span class="icon"><i class="mdi mdi-plus"></i></span> Add new parameter</button>
+                                </div>
+
+                                <div id="tab-headers" v-if="tabs.headers">
+                                    <template v-for="(header, index) in contents.headers">
+                                        <div class="control">
+                                            <div class="columns">
+                                                <div class="column header-remove-wrapper">
+                                                    <button class="button is-danger button-remove tooltip" data-tooltip="Remove this header" @click="removeField('header', index )"><span class="icon"><i class="mdi mdi-delete"></i></span></button>
+                                                </div>
+                                                <div class="column">
+                                                    <input
+                                                        class="input"
+                                                        type="text"
+                                                        placeholder="Header name"
+                                                        v-model="header.name"
+                                                        @change="saveData()"
+                                                    >
+                                                </div>
+                                                <div class="column">
+                                                    <input
+                                                        class="input"
+                                                        type="text"
+                                                        placeholder="Header value"
+                                                        v-model="header.value"
+                                                        @change="saveData()"
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <button class="button-add-new-field button is-white" @click="addNewField('header')"><span class="icon"><i class="mdi mdi-plus"></i></span> Add new header</button>
+                                </div>
+
+                                <div id="tab-headers" v-if="tabs.response">
+                                    <div class="control">
+                                        <label>Sample response</label>
+                                        <textarea
+                                            class="textarea"
+                                            v-model="contents.response"
+                                            rows="20"
+                                            @change="saveData()"
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- <div class="request-return">
+                    Request return
+                </div> -->
+            </div>
+
+        </div>
+    </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import MainContent from '@/components/MainContent.vue'
-import LeftSideBar from '@/components/LeftSideBar.vue'
-
-export default {
-  components: {
-    MainContent,
-    LeftSideBar
-  },
-  data() {
-    return {
-      form_options: {
-        methods:[
-          'GET','POST', 'PUT', 'PATCH', 'DELETE', 'OPTION'
-        ],
-        parameter:{
-          type: [
-            'MIXED', 'STRING', 'NUMERIC',
-          ]
-        }
-      },
-      showDelete: false,
-      information: {
-        name: '',
-        description: '',
-      },
-      details: {
-        endpoint: '',
-        method: 'GET',
-      },
-      request_headers: [],
-      parameters: [],
+<style>
+    .github-ribbon{
+        display: none;
     }
-  },
-  methods: {
-    successAlert( $msg = 'Success' ){
-      this.$toast.success({
-        title: 'Success',
-        message: $msg
-      })
-    },
-    errorAlert( $msg = 'Error' ){
-      this.$toast.error({
-        title: 'Error',
-        message: $msg
-      })
-    },
-    clearForm(){
-
-      this.information = {
-          name: '',
-          description: '',
-        };
-
-      this.details = {
-        endpoint: '',
-        method: 'GET',
-      };
-
-      this.request_headers = [];
-      this.parameters = [];
-    },
-    saveRequest(){
-
-      let param_id = this.$route.params.id;
-
-      if ( typeof param_id != 'undefined' && param_id != '' ) {
-        this.updateData();
-      }
-      else{
-
-        store.commit('createRequest', {
-          information: this.information,
-          details: this.details,
-          request_headers: this.request_headers,
-          parameters: this.parameters,
-        });
-
-        this.$router.push( { name: 'app' });
-        this.clearForm();
-        this.successAlert( 'New request created' );
-      }
-    },
-    deleteRequest(){
-      let data_cookie = window.getCookie( 'data' ) != '' ? JSON.parse( window.getCookie( 'data' ) ) : [],
-          param_id = this.$route.params.id,
-          idx = '',
-          data = '';
-
-      if( typeof param_id != 'undefined' && param_id != '' && data_cookie.length ){
-        data_cookie.forEach( function( ele, index ){
-          if ( ele.id === param_id ) {
-            idx = index;
-            data = data_cookie[index];
-          }
-        })
-      }
-      
-      if ( data != '' ) {
-
-        store.commit('deleteRequest', idx);
-        this.$router.push( { name: 'app' });
-        this.clearForm();
-        this.successAlert( 'Request deleted' );
-      }
-    },
-    updateData(){
-      
-      let data_cookie = window.getCookie( 'data' ) != '' ? JSON.parse( window.getCookie( 'data' ) ) : [],
-          param_id = this.$route.params.id,
-          idx = '',
-          data = '';
-
-      if( typeof param_id != 'undefined' && param_id != '' && data_cookie.length ){
-        data_cookie.forEach( function( ele, index ){
-          if ( ele.id === param_id ) {
-            idx = index;
-            data = data_cookie[index];
-          }
-        })
-      }
-
-      if ( data != '' ) {
-        store.commit('updateData', {
-          idx: idx,
-          id: data.id,
-          information: this.information,
-          details: this.details,
-          request_headers: this.request_headers,
-          parameters: this.parameters,
-        });
-        this.successAlert( 'Data saved' );
-      }
-
-    },
-    populateData(){
-
-      let data_cookie = window.getCookie( 'data' ) != '' ? JSON.parse( window.getCookie( 'data' ) ) : [],
-          param_id = this.$route.params.id,
-          data = '';
-
-      if( typeof param_id != 'undefined' && param_id != '' && data_cookie.length ){
-        data_cookie.forEach( function( ele, index ){
-          if ( ele.id === param_id ) {
-            data = data_cookie[index];
-          }
-        })
-      }
-
-      if ( data != '' ) {
-        // console.log( data.id )
-        // console.log( data.information );
-        this.information = data.information;
-        this.details = data.details;
-        this.request_headers = data.request_headers;
-        this.parameters = data.parameters;
-        this.showDelete = true;
-      }
-      else{
-        if ( typeof param_id != 'undefined' && param_id != '' ) {
-          this.$router.push( { name: 'app' });
-          this.errorAlert(`ID: ${param_id} Not found`)
-        }
-        else{
-          this.clearForm();
-          this.showDelete = false;
-        }
-      }
-
-    },
-    addHeader(){
-      if ( this.request_headers.length == 0 ) {
-        this.request_headers.push({name: 'Content-Type', value: 'application/x-www-form-urlencoded'})
-      }
-      else{
-        this.request_headers.push({name: '', value: ''})
-      }
-    },
-    addParameter(){
-      this.parameters.push({name: '', type: 'MIXED', description: '', isMinimized: false})
-    },
-    removeHeader(index){
-      this.request_headers.splice(index, 1);
-    },
-    removeParameter(index){
-      this.parameters.splice(index, 1);
-    },
-    minimizeParameter(index){
-      let parameter = this.parameters[index];
-      this.parameters[index].isMinimized = parameter.isMinimized != true ? true : false;
-    }
-  },
-  watch:{
-    $route (to, from){
-      this.populateData();
-    }
-  },
-  mounted() {
-    console.log( 'mounted' );
-    this.populateData();
-    // store.getters.populateData();
-  },
-}
-</script>
+</style>
 
 <style lang="scss" scoped>
-	#create-page{
-		display: flex;
-		min-height: 100vh;
-	}
 
-	#left-sidebar{
-		width: 200px;
-		border-right: 1px solid #eee;
-    padding: 20px 10px;
-	}
-	#main-content{
-		padding-top: 20px;
-		width: calc(100% - 200px);
-		padding: 20px;
-    margin-bottom: 50px;
+    $grey: #a9a9a9;
+    $border-bottom-color: #3f403d;
 
-    #form-wrapper{
-      width: 100%;
+    .app-page{
+        display: flex;
+        min-height: calc(100vh - 50px);
+
+        ::-webkit-input-placeholder { /* Edge */
+          color: #666;
+        }
+
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+          color: #666;
+        }
+
+        ::placeholder {
+          color: #666;
+        }
+
+        > div{
+            width: 100%;
+        }
+        .left-col{
+            padding: 10px;
+            max-width: 300px;
+            background: #353532;
+            border-right: 1px solid #474845;
+        }
+        .right-col{
+            max-width: calc(100% - 300px);
+            background: #282925;
+        }
+
+        .menu{
+
+            overflow-y: auto;
+            height: 100%;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 300px;
+            padding: 10px;
+            padding-bottom: 50px;
+
+            .button-remove{
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                color: #fff;
+                width: 27px;
+                padding: 0;
+                position: absolute;
+                top: 0px;
+                right: 0;
+                height: 24px;
+                opacity: 0;
+            }
+
+            .request-item,
+            .request-folder{
+                position: relative;
+                width: 100%;
+                cursor: pointer;
+                font-size: 16px;
+                margin-top: 10px;
+                color: $grey;
+
+                &:hover,
+                &.folder-is-open{
+                    color: #fff;
+                    input{
+                        color: #fff;
+                    }
+                }
+
+                input{
+                    font-size: 16px;
+                    color: $grey;
+                    background: none;
+                    border: none;
+                    width: calc(100% - 50px);
+                    outline: none;
+                    box-shadow: none;
+                }
+
+                &.is-active{
+                    .dropdown-menu{
+                        transform: translate(0px, -6px);
+                        transition-delay: 1s;
+                    }
+                }
+
+                .dropdown-menu{
+                    transform: translate(0px, 10px);
+                    transition: 0.3s;
+                }
+
+                &:hover{
+                    .button-remove{
+                        opacity: 1
+                    }
+                }
+            }
+
+            .request-item{
+                margin-top: 0;
+
+                .button-remove{
+                    top: 7px;
+                }
+            }
+
+            .menu-list{
+                color: $grey;
+                margin-bottom: 50px;
+
+                li{
+                    ul{
+                        margin-right: 0;
+                    }
+                }
+
+                a{
+                    color: $grey;
+                    align-items: center;
+
+                    &.is-active,
+                    &:hover{
+                        color: #fff;
+                        background: rgba(255, 255, 255, 0.1);
+                    }
+                }
+
+                .tag{
+                    min-width: 60px;
+                    margin-right: 10px;
+                }
+
+                .request-button{
+                    display: flex;
+                }
+
+                .request-name{
+                    padding-right: 5px;
+                }
+            }
+        }
+
+        #api-request-details{
+            height: 100%;
+            display: flex;
+
+            > div {
+                // padding: 0 20px;
+                width: 100%;
+            }
+
+            .request-content{
+
+                .container{
+                    padding: 10px;
+                }
+
+                .endpoint-field{
+                    background: #fff;
+                    padding: 10px;
+
+                    ::-webkit-input-placeholder { /* Edge */
+                      color: #eee;
+                    }
+
+                    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+                      color: #eee;
+                    }
+
+                    ::placeholder {
+                      color: #eee;
+                    }
+
+                    select,
+                    input{
+                        background: transparent;
+                        border: none;
+                        box-shadow: none;
+                        border-radius: 0;
+                    }
+
+                    .button-save{
+                        border-radius: 0;
+                        cursor: pointer;
+                    }
+                }
+
+                .tabs{
+                    color: $grey;
+                    margin-bottom: 2em;
+
+                    ul{
+                        border-bottom-color: $border-bottom-color;
+                    }
+
+                    li{
+                        a{
+                            color: $grey;
+                            border-bottom-color: transparent;
+                        }
+
+                        &.is-active a,
+                        a:hover{
+                            border-bottom-color: #fff;
+                            color: #fff;
+                            background: rgba(255, 255, 255, 0.1);
+                        }
+                    }
+                }
+
+                .tabs-content{
+                    .control{
+                        margin-bottom: 1.5em;
+
+                        label{
+                            display: inline-block;
+                            color: #fff;
+                            margin-bottom: 10px;
+                        }
+
+                        textarea,
+                        input{
+                            background: transparent;
+                            color: #fff;
+                            border: none;
+                            border-bottom: 1px solid $border-bottom-color;
+                            border-radius: 0;
+                            box-shadow: none;
+                        }
+
+                        .button-remove{
+                            margin-right: 10px;
+                        }
+
+                        .body-type-select-form{
+                            max-width: 195px;
+                        }
+
+                        .header-remove-wrapper{
+                            max-width: 60px;
+                        }
+                    }
+
+                    .button-add-new-field{
+                        margin-top: 2em;
+                    }
+                }
+
+            }
+            .request-return{
+                max-width: calc( 100% / 2 - 200px);
+            }
+        }
+
+        .welcome-message{
+            h1,h2 {
+                color: #fff;
+            }
+
+            h2{
+                margin-top: 2em;
+            }
+        }
     }
-	}
-  #request_description{
-    min-height: 80px;
-  }
-  .parameters-type{
-    width: 100%;
-    select{
-      width: 100%;
-    }
-  }
-  .table-container{
-    .table{
-      margin-bottom: 30px;
-    }
-  }
-  .minimized-name{
-    word-break: break-word;
-  }
-  .float-right{
-    float: right;
-  }
 </style>
+
+<script>
+
+    export default {
+        data: function() {
+            return {
+                // requests: [],
+                currentPageId: '',
+                tabList: ['details', 'body', 'headers', 'response'],
+                tabs: {
+                    details: true,
+                    body: false,
+                    headers: false,
+                    response: false,
+                },
+                showRequestContent: false,
+                contents: {
+                    method: 'GET',
+                    endpoint: '/',
+                    details: {
+                        name: '',
+                        description : '',
+                    },
+                    body: [],
+                    headers: [],
+                    response: '',
+                },
+                formOptions: {
+                    methods:[
+                        'GET','POST', 'PUT', 'PATCH', 'DELETE', 'OPTION'
+                    ],
+                    parameterType:[
+                        'MIXED', 'STRING', 'NUMERIC',
+                    ]
+                },
+            }
+        },
+        mounted() {
+            console.log('Mounted');
+            // console.log( store.state.auth );
+            this.refreshCookie();
+            this.populateData();
+        },
+        watch:{
+            $route (to, from){
+                this.populateData();
+            }
+        },
+        computed: {
+            requests(){
+                return store.getters.requests != '' ? store.getters.requests : [];
+            },
+            itemCount(){
+
+                let folderCount = 1,
+                    requestCount = 1;
+
+                this.requests.forEach( function(ele, index ){
+                    if ( ele.isFolder ) {
+                        folderCount++;
+                    }
+                    else{
+                        requestCount++;
+                    }
+                })
+
+                return {
+                    folder: folderCount,
+                    request: requestCount,
+                };
+            },
+            folderCount(){
+
+                let folderCount = 1;
+                this.requests.forEach( function(ele, index ){
+                    if ( ele.isFolder ) {
+                        folderCount++;
+                    }
+                })
+                return folderCount;
+            }
+        },
+        methods: {
+            successAlert( $msg = 'Success' ){
+                this.$toast.success({
+                    title: 'Success',
+                    message: $msg
+                })
+            },
+            errorAlert( $msg = 'Error' ){
+                this.$toast.error({
+                    title: 'Error',
+                    message: $msg
+                })
+            },
+            capitalizeFirstLetter(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            },
+            refreshCookie(){;
+                store.commit('refreshCookie');
+                // this.requests = store.getters.requests != '' ? store.getters.requests : [];
+            },
+            saveData(){
+                store.commit('saveRequest', this.requests);
+                // this.refreshCookie();
+            },
+            populateData(){
+
+                let paramId = this.$route.params.id,
+                    _requests = this.requests,
+                    data = '';
+
+                if ( typeof paramId != 'undefined' && paramId != '' && _requests.length ) {
+                    _requests.forEach( function(ele, index ){
+                        if ( ele.id === paramId ) {
+                            data = _requests[index];
+                        }
+                    })
+                }
+
+                this.showRequestContent = data;
+
+                if ( data != '' ) {
+                    this.contents = data.contents;
+                    this.currentPageId = paramId;
+                }
+                else{
+                    if ( typeof paramId != 'undefined' && paramId != '' ) {
+                        this.$router.push( { name: 'app' });
+                        this.errorAlert(`ID: ${paramId} Not found`)
+                    }
+                }
+
+            },
+            tabsToggle( type = 'details' ){
+                this.tabs = {
+                    details: false,
+                    body: false,
+                    headers: false,
+                    response: false,
+                };
+                this.tabs[type] = true;
+            },
+            toggleFolder( index ){
+                this.requests[index].isFolderOpen = ! this.requests[index].isFolderOpen
+                this.saveData();
+            },
+            createNewFolder( parentId = '' ){
+                let randomId = this.randomId();
+                this.requests.push({
+                    id: randomId,
+                    isFolder: true,
+                    isFolderOpen: true,
+                    parentId: parentId,
+                    contents: {
+                        details :{
+                            name: `New folder (${this.itemCount.folder})`,
+                        }
+                    }
+                })
+
+                this.successAlert('New folder created');
+                this.saveData();
+            },
+            createNewRequest( parentId = '' ){
+                let randomId = this.randomId();
+                this.requests.push({
+                    id: randomId,
+                    isFolder: false,
+                    parentId: parentId,
+                    contents: {
+                        method: 'GET',
+                        details :{
+                            name: `New request (${this.itemCount.request})`,
+                        },
+                        body: [],
+                        headers: [],
+                        response: '',
+                    }
+                })
+                this.successAlert('New request created');
+                this.saveData();
+
+            },
+            removeFolder(index){
+
+                let message = 'Are you sure you want to remove this folder? Any request under this folder will be moved to uncategorized section';
+                let options = {
+                    animation : 'fade',
+                    okText: 'Yes remove it',
+                    cancelText: 'Cancel',
+                };
+
+                let vm = this;
+
+                this.$dialog.confirm(message, options)
+                    .then((dialog) => {
+
+                        let parentId = vm.requests[index].id,
+                            folderName = vm.requests[index].contents.details.name;
+
+                        this.successAlert(`Folder ${folderName} removed`);
+
+                        vm.requests.forEach( function(ele, index ){
+                            if ( ele.parentId === parentId ) {
+                                vm.requests[index].parentId = '';
+                            }
+                        })
+
+                        vm.requests.splice(index, 1)
+                        this.saveData();
+                   })
+            },
+            deleteRequest(index){
+                let paramId = this.requests[index].id,
+                    requestName = this.requests[index].contents.details.name;
+
+                this.successAlert(`${requestName} removed`);
+                this.requests.splice(index, 1)
+
+                if (paramId == this.currentPageId ) {
+                    this.$router.push( { name: 'app' });
+                }
+
+                this.saveData();
+            },
+            addNewField( type = 'body' ){
+                if ( type == 'header' ) {
+                    this.contents.headers.push({
+                        name : '',
+                        value: '',
+                    });
+                }
+                else{
+                    // default - parameter
+                    this.contents.body.push({
+                        type : 'MIXED',
+                        name: '',
+                        description: '',
+                        sampleValues: '',
+                    });
+                }
+                this.saveData();
+            },
+            removeField( type = 'body', index ){
+                if ( type == 'header' ) {
+                    this.contents.headers.splice(index, 1);
+                }
+                else{
+                    // default - parameter
+                    this.contents.body.splice(index, 1);
+                }
+                this.saveData();
+            },
+            checkFolderName( index ){
+
+                let request = this.requests[index],
+                    contentName = request.contents.details.name;
+
+                if (contentName == '') {
+                    request.contents.details.name = 'New Folder';
+                }
+                this.saveData();
+            },
+            randomId(){
+                return '_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            }
+        }
+    }
+</script>
