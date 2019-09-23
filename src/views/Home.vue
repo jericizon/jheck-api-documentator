@@ -23,11 +23,11 @@
 
                 <br>
                 <h4 class="title is-4">How to use it?</h4>
-                    <p>This app is free for use but you have to make sure your javascript and browser cookies are enabled. Just open <router-link to="/app">App page</router-link> then fill up all fields there.</p>
+                    <p>This app is free for use but you have to make sure your javascript are enabled. Just open <router-link to="/app">App page</router-link> then fill up all fields there.</p>
 
                 <br>
                 <h4 class="title is-4">How to save it?</h4>
-                    <p>Data are stored using <a href="https://en.wikipedia.org/wiki/HTTP_cookie" target="_blank">browser cookie</a> for 1 day. There is also an export button to save it into <code>.json</code> file format that you will be able to import if you need it to.</p>
+                    <p>Data are stored using <a href="https://en.wikipedia.org/wiki/Web_storage" target="_blank">Web Storage</a>. There is also an export button to save it into <code>.json</code> file format that you will be able to import if you need it to.</p>
 
                 <br>
                 <h4 class="title is-4">How can I preview the document?</h4>
@@ -35,7 +35,7 @@
 
                 <br>
                 <h4 class="title is-4">Experiencing errors?</h4>
-                <p>Try to open your browser in incognito mode or clear your browser cookies, as this app uses cookie to save the data. If error still happen you can issue a ticket <a href="https://github.com/jheckizon/jheck-api-documentator/issues/new" target="_blank">here</a>.</p>
+                <p>Try to open your browser in incognito mode. If error still happen you can issue a ticket <a href="https://github.com/jheckizon/jheck-api-documentator/issues/new" target="_blank">here</a>.</p>
 
             </div>
         </div>

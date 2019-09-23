@@ -69,7 +69,7 @@
                                     <br>
                                     <h3 class="title is-5">Headers</h3>
                                     <div class="table-container">
-                                        <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+                                        <table class="table-content-header table is-bordered is-striped is-hoverable is-fullwidth">
                                             <thead>
                                                 <tr>
                                                     <th>Header name</th>
@@ -94,7 +94,7 @@
                                     <br>
                                     <h3 class="title is-5">Body</h3>
                                     <div class="table-container">
-                                        <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+                                        <table class="table table-content-body is-bordered is-striped is-hoverable is-fullwidth">
                                             <thead>
                                                 <tr>
                                                     <th>Type</th>
@@ -319,6 +319,28 @@
                 white-space: pre;
                 word-break: break-word;
                 overflow-x: scroll;
+                background: #353532;
+                color: #fff;
+            }
+
+            .table-content-header{
+                thead{
+                    tr{
+                        th{
+                            width: calc( 100% / 2 );
+                        }
+                    }
+                }
+            }
+
+            .table-content-body{
+                thead {
+                    tr {
+                        th {
+                            width: calc(100%/4);
+                        }
+                    }
+                }
             }
         }
     }

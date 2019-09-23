@@ -42,7 +42,7 @@
                                 <a class="button is-info tooltip is-tooltip-bottom" data-tooltip="Save into .json format file" @click="exportJson()">
                                     <span class="icon"><i class="mdi mdi-cloud-download"></i></span> <span>Export File</span>
                                 </a>
-                                <a class="button is-danger tooltip is-tooltip-bottom" data-tooltip="Clear your cookies" @click="clearWorkspace()" v-if="showClearAllRecords">
+                                <a class="button is-danger tooltip is-tooltip-bottom" data-tooltip="Clear your workspace" @click="clearWorkspace()" v-if="showClearAllRecords">
                                     <span class="icon"><i class="mdi mdi-delete-alert"></i></span> <span>Clear all workspace</span>
                                 </a>
                                 <a href="https://www.producthunt.com/posts/jheck-api-documentator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-jheck-api-documentator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=168639&theme=light" alt="Jheck Api Documentator - Simplify creating of api documentation online | Product Hunt Embed" style="width: 130px; height: 54px; transform: scale(1.3); transform-origin: left center;" target="_blank"/></a>
@@ -107,12 +107,20 @@
 
 <script>
 
-    import Cookies from "js-cookie";
-
     export default {
         data: function() {
             return {
                 isOpen: false
+            }
+        },
+        mounted(){
+            if ( window.innerWidth <= 900 ) {
+                let message = 'Hello, this app doesn\'t support mobile. For better experience you can try it on desktop. :)';
+                let options = {
+                    animation : 'bounce',
+                    // cancelText: 'Okay',
+                };
+                this.$dialog.confirm(message, options);
             }
         },
         computed: {
@@ -145,6 +153,8 @@
                                     title: 'Success',
                                     message: 'File imported',
                                 })
+
+                                console.log( json.data );
                                 store.commit('importJson', json.data);
 
                                 let currentRouteName = vm.$router.currentRoute.name;
@@ -155,7 +165,7 @@
                             }
 
                         } catch (ex) {
-                            // alert('ex when trying to parse json = ' + ex);
+                            alert('ex when trying to parse json = ' + ex);
                             vm.$toast.error({
                                 title: 'Error',
                                 message: 'Sorry we cannot read this file',
@@ -173,6 +183,7 @@
                 })(file);
 
                 reader.readAsText(file);
+                document.getElementById('import-json').value = '';
 
             },
             exportJson() {
@@ -231,6 +242,10 @@
                             message: 'Workspace now cleared',
                         })
                         store.commit('clearWorkspace');
+
+                        if ( currentRouteName != 'app' && currentRouteName != 'preview' ) {
+                            vm.$router.push( { name: 'app' });
+                        }
                    })
             }
         }

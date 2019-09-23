@@ -44,7 +44,7 @@
                                             <span class="tag method" :data-method="request.contents.method.toLowerCase()">{{request.contents.method}}</span>
                                             <span class="request-name">{{request.contents.details.name}}</span>
                                         </router-link>
-                                        <button class="button button-remove tooltip is-tooltip-right is-tooltip-danger" data-tooltip="Delete request" @click="deleteRequest(index)">
+                                        <button class="button button-remove tooltip is-tooltip-left is-tooltip-danger" data-tooltip="Delete request" @click="deleteRequest(index)">
                                           <span class="icon">
                                             <i class="mdi mdi-delete" aria-hidden="true"></i>
                                           </span>
@@ -243,7 +243,7 @@
                                     <div class="control">
                                         <label>Sample response</label>
                                         <textarea
-                                            class="textarea"
+                                            class="textarea response-text"
                                             v-model="contents.response"
                                             rows="20"
                                             @change="saveData()"
@@ -494,8 +494,9 @@
 
                         label{
                             display: inline-block;
-                            color: #fff;
+                            color: $grey;
                             margin-bottom: 10px;
+                            font-weight: 700;
                         }
 
                         textarea,
@@ -506,6 +507,11 @@
                             border-bottom: 1px solid $border-bottom-color;
                             border-radius: 0;
                             box-shadow: none;
+                        }
+
+                        .response-text{
+                            background: #353532;
+                            border: 1px solid #474845;
                         }
 
                         .button-remove{
@@ -581,9 +587,9 @@
             }
         },
         mounted() {
-            console.log('Mounted');
+            // console.log('Mounted');
             // console.log( store.state.auth );
-            this.refreshCookie();
+            this.refreshStorage();
             this.populateData();
         },
         watch:{
@@ -641,13 +647,13 @@
             capitalizeFirstLetter(string) {
                 return string.charAt(0).toUpperCase() + string.slice(1);
             },
-            refreshCookie(){;
-                store.commit('refreshCookie');
+            refreshStorage(){;
+                store.commit('refreshStorage');
                 // this.requests = store.getters.requests != '' ? store.getters.requests : [];
             },
             saveData(){
                 store.commit('saveRequest', this.requests);
-                // this.refreshCookie();
+                // this.refreshStorage();
             },
             populateData(){
 

@@ -27,24 +27,21 @@ export default function (/* { ssrContext } */) {
             }
         },
         mutations: {
-            refreshCookie(state){
-                let jheckApiGeneratorData = Cookies.get('jheckApiGeneratorData');
+            refreshStorage(state){
+                let jheckApiGeneratorData = localStorage.jheckApiGeneratorData;
                     return state.requests = typeof jheckApiGeneratorData != 'undefined' && jheckApiGeneratorData != '' ? JSON.parse(jheckApiGeneratorData) : [];
             },
             saveRequest( state, _data ){
                 state.requests = _data;
-                this.commit('saveCookie');
+                localStorage.jheckApiGeneratorData = JSON.stringify(_data);
             },
             importJson( state, _data ){
                 this.commit('saveRequest', _data);
-                this.commit('refreshCookie');
-            },
-            saveCookie(state){
-                Cookies.set('jheckApiGeneratorData', JSON.stringify(state.requests), { expires: 1 });
+                this.commit('refreshStorage');
             },
             clearWorkspace(state){
                 this.commit('saveRequest', []);
-                this.commit('refreshCookie');
+                this.commit('refreshStorage');
             }
         },
     })
