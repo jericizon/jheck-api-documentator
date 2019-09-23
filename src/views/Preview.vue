@@ -321,6 +321,7 @@
                 overflow-x: scroll;
                 background: #353532;
                 color: #fff;
+                max-height: calc(100vh - 250px);
             }
 
             .table-content-header{
