@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-            <a class="github-ribbon" href="https://github.com/jheckizon/jheck-api-documentator"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+            <!-- <a class="github-ribbon" href="https://github.com/jheckizon/jheck-api-documentator"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a> -->
             <div class="container">
                 <div class="navbar-brand">
                     <router-link to="/" class="navbar-item"><img src="./assets/logo.png" alt="Jheck Api Documentator Logo"></router-link>
