@@ -4,7 +4,7 @@
             <div class="container">
                 <h1 class="title">About jheck api documentator</h1>
 
-                <p>This application was built using <a href="https://vuejs.org?utm_source=jheck-api-documnentator&utm_medium=referral" target="_blank">vuejs framework</a> and <a href="?utm_source=jheck-api-documnentator&utm_medium=referral" target="_blank">bulma.css</a> for the designing layout. It uses browser cookies to store the data for one day.</p>
+                <p>This application was built using <a href="https://vuejs.org?utm_source=jheck-api-documnentator&utm_medium=referral" target="_blank">vuejs framework</a> and <a href="?utm_source=jheck-api-documnentator&utm_medium=referral" target="_blank">bulma.css</a> for the designing layout. It uses <a href="https://en.wikipedia.org/wiki/Web_storage" target="_blank">Web Storage</a> to store data.</p>
             </div>
         </div>
         <footer class="footer">
