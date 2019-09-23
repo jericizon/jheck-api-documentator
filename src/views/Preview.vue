@@ -190,6 +190,7 @@
             left: 0;
             width: 300px;
             padding: 10px;
+            padding-bottom: 50px;
 
             .button-toggle{
                 background: transparent;
@@ -260,6 +261,7 @@
 
             .menu-list{
                 color: $grey;
+                margin-bottom: 50px;
 
                 li{
                     ul{
@@ -320,7 +322,8 @@
                 word-break: break-word;
                 overflow-x: scroll;
                 background: #353532;
-                color: #fff;
+                color: #ffdd57;
+                padding: 20px;
                 max-height: calc(100vh - 250px);
             }
 
