@@ -165,16 +165,6 @@
                                             <div class="columns">
                                                 <div class="column body-type-select-form">
                                                     <button class="button is-danger button-remove tooltip" data-tooltip="Remove this parameter" @click="removeField('body', index )"><span class="icon"><i class="mdi mdi-delete"></i></span></button>
-                                                    <div class="select">
-                                                        <select
-                                                          v-model="body.type"
-                                                          @change="saveData()"
-                                                        >
-                                                            <option v-for="(type, index) in formOptions.parameterType">
-                                                                {{type}}
-                                                            </option>
-                                                        </select>
-                                                    </div>
                                                 </div>
                                                 <div class="column">
                                                     <input
@@ -519,7 +509,7 @@
                         }
 
                         .body-type-select-form{
-                            max-width: 195px;
+                            max-width: 50px;
                         }
 
                         .header-remove-wrapper{
@@ -579,9 +569,6 @@
                 formOptions: {
                     methods:[
                         'GET','POST', 'PUT', 'PATCH', 'DELETE', 'OPTION'
-                    ],
-                    parameterType:[
-                        'MIXED', 'STRING', 'NUMERIC',
                     ]
                 },
             }

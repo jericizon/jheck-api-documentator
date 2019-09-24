@@ -52,15 +52,17 @@
 
                             <div class="request-item-section request-item-content" :id="request.id" v-if="!request.isFolder">
                                 <h1 class="title is-3">
+                                    <span class="request-name">{{request.contents.details.name}} </span>
                                     <router-link :to="{ name: 'preview', params: { id: request.id }}">
-                                        <span class="request-name">{{request.contents.details.name}} </span>
+                                        <span class="icon request-item-content-acnchor">
+                                            <i class="mdi mdi-link-variant"></i>
+                                        </span>
                                     </router-link>
                                 </h1>
-                                <h2 class="subtitle">{{ request.contents.details.description }}</h2>
+                                <h2 class="subtitle is-6">{{ request.contents.details.description }}</h2>
 
                                 <br>
-                                <h3 class="title is-5">Endpoint</h3>
-                                <div class="notification">
+                                <div class="notification endpoint">
                                   <span class="tag method" :data-method="request.contents.method.toLowerCase()">
                                   {{ request.contents.method }}</span> - {{ request.contents.endpoint }}
                                 </div>
@@ -97,7 +99,6 @@
                                         <table class="table table-content-body is-bordered is-striped is-hoverable is-fullwidth">
                                             <thead>
                                                 <tr>
-                                                    <th>Type</th>
                                                     <th>Name</th>
                                                     <th style="max-width: 120px">Description</th>
                                                     <th style="max-width: 120px">Sample values</th>
@@ -105,9 +106,6 @@
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(body, bodyIndex) in request.contents.body">
-                                                    <td>
-                                                        {{ body.type || '-' }}
-                                                    </td>
                                                     <td>
                                                         {{ body.name || '-' }}
                                                     </td>
@@ -320,7 +318,7 @@
                 display: block;
                 white-space: pre;
                 word-break: break-word;
-                overflow-x: scroll;
+                overflow-x: auto;
                 background: #353532;
                 color: #ffdd57;
                 padding: 20px;
@@ -346,6 +344,18 @@
                     }
                 }
             }
+
+            .endpoint{
+                font-size: 1.5rem;
+
+                .method{
+                    font-size: .75em;
+                }
+            }
+
+            .request-item-content-acnchor{
+                font-size: .75em;
+            }
         }
     }
 </style>
@@ -361,7 +371,7 @@
         mounted() {
             console.log('Mounted');
             // console.log( store.state.auth );
-            this.refreshCookie();
+            this.refreshStorage();
             this.scrollToPage();
         },
         watch:{
@@ -375,8 +385,8 @@
             }
         },
         methods: {
-            refreshCookie(){;
-                store.commit('refreshCookie');
+            refreshStorage(){;
+                store.commit('refreshStorage');
                 // this.requests = store.getters.requests != '' ? store.getters.requests : [];
             },
             scrollToPage(){
