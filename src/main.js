@@ -5,6 +5,7 @@ import store from './store'
 import VuejsDialog from 'vuejs-dialog';
 import Toastr from 'vue2-toastr'
 import VueAnalytics from 'vue-analytics'
+import VueHighlightJS from 'vue-highlightjs'
 
 import 'bulma/css/bulma.css';
 import 'bulma-tooltip/dist/css/bulma-tooltip.min.css';
@@ -21,6 +22,7 @@ Vue.use(Toastr, {
 })
 
 Vue.use(VuejsDialog);
+Vue.use(VueHighlightJS)
 Vue.config.productionTip = false
 
 const isProd = process.env.NODE_ENV === 'production';

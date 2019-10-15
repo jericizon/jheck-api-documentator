@@ -7,19 +7,15 @@
                     <p class="menu-label">Requests</p>
                     <template v-for="(folder,folderIndex) in requests">
                         <li v-if="folder.isFolder">
-                            <div class="request-folder" :class="{'folder-is-open': folder.isFolderOpen}" @click="toggleFolder(folderIndex)">
+                            <div class="request-folder folder-is-open">
                                 <span class="icon">
-                                    <i class="mdi" :class="{'mdi-folder-open': folder.isFolderOpen, 'mdi-folder': ! folder.isFolderOpen}"></i></span>
-                                    <span>
-                                        {{requests[folderIndex].contents.details.name}}
-                                    </span>
-                                <button class="button button-toggle">
-                                  <span class="icon">
-                                    <i class="mdi" :class="{'mdi-minus': folder.isFolderOpen, 'mdi-chevron-down': ! folder.isFolderOpen}" aria-hidden="true"></i>
-                                  </span>
-                                </button>
+                                    <i class="mdi mdi-folder-open"></i>
+                                </span>
+                                <span>
+                                    {{requests[folderIndex].contents.details.name}}
+                                </span>
                             </div>
-                            <ul v-if="folder.isFolderOpen">
+                            <ul>
                                 <template v-for="(request,index) in requests">
                                     <li class="request-item request-item-nav" v-if="! request.isFolder && request.parentId == folder.id">
                                         <router-link active-class="is-active" class="request-button" :to="{ name: 'preview', params: { id: request.id }}">
@@ -48,18 +44,105 @@
                 <div class="request-content">
 
                     <div class="container">
+
+                        <template v-for="(folder,folderIndex) in requests">
+                            <template v-if="folder.isFolder">
+                                <template v-for="(request,index) in requests">
+                                    <div class="request-item-section request-item-content" :id="request.id" v-if="!request.isFolder">
+                                        <h3 class="title is-3">
+                                            <span class="request-name">{{request.contents.details.name}} </span>
+                                            <router-link :to="{ name: 'preview', params: { id: request.id }}">
+                                                <span class="icon request-item-content-acnchor">
+                                                    <i class="mdi mdi-link-variant"></i>
+                                                </span>
+                                            </router-link>
+                                        </h3>
+                                        <h6 class="subtitle is-6">{{ request.contents.details.description }}</h6>
+
+                                        <br>
+                                        <div class="notification endpoint">
+                                        <span class="tag method" :data-method="request.contents.method.toLowerCase()">
+                                        {{ request.contents.method }}</span> - {{ request.contents.endpoint }}
+                                        </div>
+
+                                        <template v-if="request.contents.headers.length">
+                                            <br>
+                                            <h5 class="title is-5">Headers</h5>
+                                            <div class="table-container">
+                                                <table class="table-content-header table is-bordered is-striped is-hoverable is-fullwidth">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Header name</th>
+                                                            <th>Header value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(header, headerIndex) in request.contents.headers">
+                                                            <td>
+                                                                {{ header.name || '-' }}
+                                                            </td>
+                                                            <td>
+                                                                {{ header.value || '-' }}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </template>
+
+                                        <template v-if="request.contents.body.length">
+                                            <br>
+                                            <h5 class="title is-5">Body</h5>
+                                            <div class="table-container">
+                                                <table class="table table-content-body is-bordered is-striped is-hoverable is-fullwidth">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th style="max-width: 120px">Description</th>
+                                                            <th style="max-width: 120px">Sample values</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(body, bodyIndex) in request.contents.body">
+                                                            <td>
+                                                                {{ body.name || '-' }}
+                                                            </td>
+                                                            <td>
+                                                                {{ body.description || '-' }}
+                                                            </td>
+                                                            <td>
+                                                                {{ body.sampleValues || '-' }}
+                                                            </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </template>
+
+                                        <template v-if="request.contents.response != ''">
+                                            <br>
+                                            <h5 class="title is-5">Response</h5>
+                                            <pre v-highlightjs="request.contents.response" class="contents-response"><code class="javascript"></code></pre>
+                                        </template>
+
+                                    </div>
+                                </template>                                
+                            </template>
+                        </template>
+
                         <template v-for="(request,index) in requests">
 
                             <div class="request-item-section request-item-content" :id="request.id" v-if="!request.isFolder">
-                                <h1 class="title is-3">
+                                <h3 class="title is-3">
                                     <span class="request-name">{{request.contents.details.name}} </span>
                                     <router-link :to="{ name: 'preview', params: { id: request.id }}">
                                         <span class="icon request-item-content-acnchor">
                                             <i class="mdi mdi-link-variant"></i>
                                         </span>
                                     </router-link>
-                                </h1>
-                                <h2 class="subtitle is-6">{{ request.contents.details.description }}</h2>
+                                </h3>
+                                <h6 class="subtitle is-6">{{ request.contents.details.description }}</h6>
 
                                 <br>
                                 <div class="notification endpoint">
@@ -69,7 +152,7 @@
 
                                 <template v-if="request.contents.headers.length">
                                     <br>
-                                    <h3 class="title is-5">Headers</h3>
+                                    <h5 class="title is-5">Headers</h5>
                                     <div class="table-container">
                                         <table class="table-content-header table is-bordered is-striped is-hoverable is-fullwidth">
                                             <thead>
@@ -94,7 +177,7 @@
 
                                 <template v-if="request.contents.body.length">
                                     <br>
-                                    <h3 class="title is-5">Body</h3>
+                                    <h5 class="title is-5">Body</h5>
                                     <div class="table-container">
                                         <table class="table table-content-body is-bordered is-striped is-hoverable is-fullwidth">
                                             <thead>
@@ -124,12 +207,12 @@
 
                                 <template v-if="request.contents.response != ''">
                                     <br>
-                                    <h3 class="title is-5">Response</h3>
-                                    <code class="contents-response">{{ request.contents.response }}</code>
+                                    <h5 class="title is-5">Response</h5>
+                                    <pre v-highlightjs="request.contents.response" class="contents-response"><code class="javascript"></code></pre>
                                 </template>
 
                             </div>
-                        </template>
+                        </template>                        
                     </div>
                 </div>
             </div>
@@ -147,7 +230,7 @@
 <style lang="scss" scoped>
 
     $grey: #a9a9a9;
-    $border-bottom-color: #3f403d;
+    $border-bottom-color: #3f403d;    
 
     .app-page{
         display: flex;
@@ -320,7 +403,7 @@
                 word-break: break-word;
                 overflow-x: auto;
                 background: #353532;
-                color: #ffdd57;
+                color: #fafafa;
                 padding: 20px;
                 max-height: calc(100vh - 250px);
             }
@@ -356,7 +439,7 @@
             .request-item-content-acnchor{
                 font-size: .75em;
             }
-        }
+        }  
     }
 </style>
 
@@ -369,7 +452,7 @@
             }
         },
         mounted() {
-            console.log('Mounted');
+            // console.log('Mounted');
             // console.log( store.state.auth );
             this.refreshStorage();
             this.scrollToPage();
@@ -394,9 +477,10 @@
                 let paramId = this.$route.params.id,
                     element = document.getElementById( paramId );
 
-                if ( typeof paramId != 'undefined' && paramId != '' && typeof element != 'undefined') {
+                if ( typeof paramId != 'undefined' && paramId != '' && typeof element != 'undefined' && element !== null) {                    
                     let topBuff = 0,
-                        position = element.offsetTop > topBuff ? element.offsetTop - topBuff : 0;
+                        offsetTop = element.offsetTop || 0,
+                        position = offsetTop > topBuff ? offsetTop - topBuff : 0;
                     window.scrollTo(0, position);
                 }
             },

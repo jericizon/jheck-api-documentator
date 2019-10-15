@@ -45,7 +45,7 @@
                                 <a class="button is-danger tooltip is-tooltip-bottom" data-tooltip="Clear your workspace" @click="clearWorkspace()" v-if="showClearAllRecords">
                                     <span class="icon"><i class="mdi mdi-delete-alert"></i></span> <span>Clear all workspace</span>
                                 </a>
-                                <a href="https://www.producthunt.com/posts/jheck-api-documentator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-jheck-api-documentator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=168639&theme=light" alt="Jheck Api Documentator - Simplify creating of api documentation online | Product Hunt Embed" style="width: 130px; height: 54px; transform: scale(1.3); transform-origin: left center;" target="_blank"/></a>
+                                <!-- <a href="https://www.producthunt.com/posts/jheck-api-documentator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-jheck-api-documentator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=168639&theme=light" alt="Jheck Api Documentator - Simplify creating of api documentation online | Product Hunt Embed" style="width: 130px; height: 54px; transform: scale(1.3); transform-origin: left center;" target="_blank"/></a> -->
                                 <a id="export-json" style="display:none">Preview</a>
                                 <input type="file" id="import-json" accept=".json,application/json" style="display: none;">
                             </div>
@@ -61,6 +61,17 @@
 </template>
 
 <style lang="scss">
+    span.hljs-string{
+        color: #ffdd57;
+    }
+
+    span.hljs-number{
+        color: #209cee;
+    }
+    span.hljs-literal {
+        color: #209cee;
+        font-weight: 700;
+    }
     .content-margin{
         margin-top: 2em;
     }
@@ -107,6 +118,8 @@
 
 <script>
 
+    import axios from 'axios';
+
     export default {
         data: function() {
             return {
@@ -122,6 +135,29 @@
                 };
                 this.$dialog.confirm(message, options);
             }
+
+            let importUrl = this.getQueryParams('json_url', decodeURIComponent(window.location.href));
+
+            if(importUrl){
+                axios({
+                    method: 'get',
+                    url: importUrl
+                })
+                .then((response) => {                    
+                    console.log(response);
+                    
+                }).catch((error) => {
+                    console.log(error);
+
+                    let message = `Oops, sorry we cannot read your file : ${importUrl}`;
+                    let options = {
+                        animation : 'bounce',
+                        // cancelText: 'Okay',
+                    };
+                    this.$dialog.confirm(message, options);
+                });
+            }
+
         },
         computed: {
             showClearAllRecords(){
@@ -130,6 +166,14 @@
             }
         },
         methods: {
+            getQueryParams(name, url){
+                if (!url) url = location.href;
+                name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+                var regexS = "[\\?&]"+name+"=([^&#]*)";
+                var regex = new RegExp( regexS );
+                var results = regex.exec( url );
+                return results == null ? null : results[1];
+            },
             importJson(){
               document.getElementById('import-json').addEventListener('change', this.readJson , false);
               document.getElementById('import-json').click();
