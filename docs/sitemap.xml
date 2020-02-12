@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://jericizon.github.io/jheck-api-documentator/</loc>
+  <lastmod>2020-02-12T09:00:31+00:00</lastmod>
+</url>
+<url>
+  <loc>https://jericizon.github.io/jheck-api-documentator/#/app</loc>
+  <lastmod>2020-02-12T09:00:31+00:00</lastmod>
+</url>
+<url>
+  <loc>https://jericizon.github.io/jheck-api-documentator/#/preview</loc>
+  <lastmod>2020-02-12T09:00:31+00:00</lastmod>
+</url>
+<url>
+  <loc>https://jericizon.github.io/jheck-api-documentator/#/about</loc>
+  <lastmod>2020-02-12T09:00:31+00:00</lastmod>
+</url>
+
+</urlset>
